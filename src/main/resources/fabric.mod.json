@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "parry",
+  "version": "${version}",
+
+  "name": "Parry",
+  "description": "Block with your sword!",
+  "authors": [
+    "FoundationGames"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+  "license": "MIT",
+  "icon": "assets/parry/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.foundationgames.parry.Parry"
+    ]
+  },
+  "mixins": [
+    "parry.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
