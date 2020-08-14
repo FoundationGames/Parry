@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "io.github.foundationgames.parry.Parry"
+    ],
+    "client": [
+      "io.github.foundationgames.parry.ParryClient"
     ]
   },
   "mixins": [

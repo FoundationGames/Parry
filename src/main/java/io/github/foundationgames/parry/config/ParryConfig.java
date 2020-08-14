@@ -8,8 +8,10 @@ import net.minecraft.util.registry.Registry;
 
 @Config(name = "parry")
 public class ParryConfig implements ConfigData {
-    public double defaultParryDamageModifier = 0.50;
-    public OverrideValue[] parryDamageOverrides = new OverrideValue[] {};
+    public double default_multiplier = 0.50;
+    public boolean consume_animation = true;
+    public boolean prioritize_shield = false;
+    public OverrideValue[] overrides = new OverrideValue[] {};
 
     public static class OverrideValue {
         public String item;
