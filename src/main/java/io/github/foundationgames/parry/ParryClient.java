@@ -11,7 +11,7 @@ public class ParryClient implements ClientModInitializer {
     public void onInitializeClient() {
         Registry.ITEM.forEach((item) -> {
             if(item instanceof SwordItem) {
-                FabricModelPredicateProviderRegistry.register(item, new Identifier("parrying"), (stack, world, entity) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
+                FabricModelPredicateProviderRegistry.register(item, new Identifier("parrying"), (stack, world, entity, i) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F);
             }
         });
     }

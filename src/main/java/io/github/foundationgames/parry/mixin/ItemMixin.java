@@ -1,7 +1,6 @@
 package io.github.foundationgames.parry.mixin;
 
-import io.github.foundationgames.parry.config.ParryConfig;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
+import io.github.foundationgames.parry.Parry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,30 +18,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Item.class)
 public class ItemMixin {
     @Inject(at = @At(value = "HEAD"), method = "use", cancellable = true)
-    public void useSword(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+    public void parry$allowSwordUse(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
         if(user.getStackInHand(hand).getItem() instanceof SwordItem) {
-            ParryConfig cfg = AutoConfig.getConfigHolder(ParryConfig.class).getConfig();
-            ItemStack itemStack = user.getStackInHand(hand);
+            var cfg = Parry.getConfig();
+            var stack = user.getStackInHand(hand);
             if(cfg.prioritize_shield && user.getStackInHand(Hand.OFF_HAND).getItem() instanceof ShieldItem) {
                 user.setCurrentHand(Hand.OFF_HAND);
                 cir.cancel();
             }
             user.setCurrentHand(hand);
             user.setSprinting(false);
-            if(cfg.consume_animation) cir.setReturnValue(TypedActionResult.consume(itemStack));
-            else cir.setReturnValue(TypedActionResult.pass(itemStack));
+            if(cfg.consume_animation) cir.setReturnValue(TypedActionResult.consume(stack));
+            else cir.setReturnValue(TypedActionResult.pass(stack));
         }
     }
 
     @Inject(at = @At(value = "HEAD"), method = "getMaxUseTime", cancellable = true)
-    public void swordUseTime(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
+    public void parry$applySwordUseTime(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         if(stack.getItem() instanceof SwordItem) {
             cir.setReturnValue(72000);
         }
     }
 
     @Inject(at = @At(value = "HEAD"), method = "getUseAction", cancellable = true)
-    public void useAction(ItemStack stack, CallbackInfoReturnable<UseAction> cir) {
+    public void parry$returnBlockUseAction(ItemStack stack, CallbackInfoReturnable<UseAction> cir) {
         if(stack.getItem() instanceof SwordItem) {
             cir.setReturnValue(UseAction.BLOCK);
         }
