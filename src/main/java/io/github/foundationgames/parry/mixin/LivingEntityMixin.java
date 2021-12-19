@@ -23,34 +23,36 @@ public abstract class LivingEntityMixin extends Entity {
     @Shadow public abstract boolean isUsingItem();
     @Shadow public abstract boolean blockedByShield(DamageSource source);
 
-    private DamageSource cachedSource;
+    private DamageSource parry$cachedSource;
+    private boolean parry$appearBlocking = false;
 
     @Inject(at = @At(value = "HEAD"), method = "isBlocking", cancellable = true)
-    public void parry$nullifySwordBlock(CallbackInfoReturnable<Boolean> cir) {
+    public void parry$fakeShieldBlocking(CallbackInfoReturnable<Boolean> cir) {
         var item = this.activeItemStack.getItem();
         if(item instanceof SwordItem) {
-            cir.setReturnValue(false);
+            cir.setReturnValue(parry$appearBlocking);
         }
     }
 
     @Inject(at = @At(value = "HEAD"), method = "damage", cancellable = true)
     public void parry$cacheDamageSource(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        this.cachedSource = source;
+        this.parry$cachedSource = source;
     }
 
     @ModifyVariable(method = "damage", at = @At("HEAD"), index = 2)
     private float parry$applySwordBlockProtection(float old) {
         var item = this.activeItemStack.getItem();
-        if(item instanceof SwordItem && this.isUsingItem()) {
-            if(this.blockedByShield(cachedSource)) {
-                var cfg = Parry.getConfig();
-                double multiplier = cfg.default_multiplier;
-                for(ParryConfig.OverrideValue v : cfg.overrides) {
-                    if(item == v.getItem()) multiplier = v.multiplier;
-                }
-                old *= multiplier;
+        parry$appearBlocking = true;
+        if(item instanceof SwordItem && this.isUsingItem() && this.blockedByShield(parry$cachedSource)) {
+            var cfg = Parry.getConfig();
+            double multiplier = cfg.default_multiplier;
+            for(ParryConfig.OverrideValue v : cfg.overrides) {
+                if(item == v.getItem()) multiplier = v.multiplier;
             }
+            System.out.println(old +" into "+old * multiplier);
+            old *= multiplier;
         }
+        parry$appearBlocking = false;
         return old;
     }
 
